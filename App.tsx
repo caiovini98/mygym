@@ -11,7 +11,7 @@ import {
 
 import styles from './App.styles';
 
-// import AddTrainingModal from './src/components/AddTrainingModal/AddTrainingModal';
+import AddTrainingModal from './src/components/AddTrainingModal/AddTrainingModal';
 
 function App(): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -91,9 +91,20 @@ function App(): JSX.Element {
     },
   ];
 
+  // TODO
+  /**
+   * Formulário no cadastro do dias []
+   * Instalar o firebase e afins [V]
+   * Ver as coisas do service e ajeitar []
+   * Consumir as rotas []
+   * Gerar APK e testar []
+   */
+
   const Item = ({title}: {title: string}) => (
     <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>25</Text>
+      <Text style={styles.title}>Tríceps e peito</Text>
+      <Text style={styles.title}>25/08</Text>
     </View>
   );
 
@@ -118,12 +129,12 @@ function App(): JSX.Element {
             renderItem={({item}) => <Item title={item.title} />}
             keyExtractor={item => item.id}
           />
-          <TouchableOpacity onPress={() => setOpenModal(true)}>
-            <View>
-              <Text style={styles.modalTitle}>Clique para abrir o modal</Text>
-            </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setOpenModal(true)}>
+            <Text style={styles.modalTitle}>REGISTRAR NOVO DIA</Text>
           </TouchableOpacity>
-          {/* <AddTrainingModal openModal={openModal} setOpenModal={setOpenModal} /> */}
+          <AddTrainingModal openModal={openModal} setOpenModal={setOpenModal} />
         </View>
       </View>
     </>

@@ -34,14 +34,16 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   item: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#FE5A27',
     padding: 5,
     marginVertical: 6,
     marginHorizontal: 20,
     borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   title: {
-    fontSize: 25,
+    fontSize: 15,
     color: '#101624',
   },
   flatList: {
@@ -50,7 +52,17 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   modalTitle: {
-    color: 'red',
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  button: {
+    backgroundColor: '#44bd32',
+    marginBottom: 25,
+    marginHorizontal: 20,
+    height: 45,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
