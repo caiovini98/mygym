@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
     color: '#101624',
   },
   flatList: {
-    // backgroundColor: 'green',
     marginTop: 8,
     marginBottom: 50,
   },

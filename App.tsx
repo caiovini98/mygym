@@ -93,7 +93,7 @@ function App(): JSX.Element {
 
   // TODO
   /**
-   * Formulário no cadastro do dias []
+   * Formulário no cadastro do dias [V]
    * Instalar o firebase e afins [V]
    * Ver as coisas do service e ajeitar []
    * Consumir as rotas []
