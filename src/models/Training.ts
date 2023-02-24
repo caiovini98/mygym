@@ -1,6 +1,6 @@
 export type Training = {
   training: string;
-  date: Date;
+  date: string;
   day: number;
-  id?: string | number;
+  id: string;
 };

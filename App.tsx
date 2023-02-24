@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   StatusBar,
@@ -9,102 +9,46 @@ import {
   FlatList,
 } from 'react-native';
 
+import firebase from './src/service/firebaseConnection';
+
 import styles from './App.styles';
 
 import AddTrainingModal from './src/components/AddTrainingModal/AddTrainingModal';
+import {Training} from './src/models/Training';
 
 function App(): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
+  const [dados, setDados] = useState<Training[]>([]);
 
-  const data = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Second Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-      id: '58694a0f-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-      id: '58694a0f-3da1--bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-      id: '58694a0-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96',
-      title: 'Third Item',
-    },
-    {
-      id: '58694a0f-3da1-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-      id: '-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-      id: '-3da1-471f-bd96-',
-      title: 'Third Item',
-    },
-    {
-      id: '-3da1-47d1f-bd96-',
-      title: 'Third Item',
-    },
-    {
-      id: '--471fassa-bd96-',
-      title: 'Third Item',
-    },
-    {
-      id: '-471fr-bd96-',
-      title: 'Third Item',
-    },
-    {
-      id: '--47ewqe1f-bds96-',
-      title: 'Third Item',
-    },
-    {
-      id: '-3dasda-bd96-',
-      title: 'Third Item',
-    },
-    {
-      id: '-3dasdasda1--bd96-',
-      title: 'Third Item',
-    },
-    {
-      id: '-3daas1-k-',
-      title: 'Third Item',
-    },
-    {
-      id: '-3da1-471f-b9sssss6-',
-      title: 'Third Item',
-    },
-  ];
+  useEffect(() => {
+    getTrainings();
+  }, []);
 
-  // TODO
-  /**
-   * Formulário no cadastro do dias [V]
-   * Instalar o firebase e afins [V]
-   * Ver as coisas do service e ajeitar []
-   * Consumir as rotas []
-   * Gerar APK e testar []
-   */
+  const getTrainings = async () => {
+    await firebase
+      .database()
+      .ref('trainings')
+      .on('value', snapshot => {
+        const treinos: Training[] = [];
 
-  const Item = ({title}: {title: string}) => (
+        snapshot.forEach(childItem => {
+          treinos.push({
+            id: childItem.val().id,
+            date: childItem.val().date,
+            day: childItem.val().day,
+            training: childItem.val().training,
+          });
+
+          setDados(treinos);
+        });
+      });
+  };
+
+  const Item = ({training, day, date}: Training) => (
     <View style={styles.item}>
-      <Text style={styles.title}>25</Text>
-      <Text style={styles.title}>Tríceps e peito</Text>
-      <Text style={styles.title}>25/08</Text>
+      <Text style={styles.title}>Dia {day}</Text>
+      <Text style={styles.title}>{training}</Text>
+      <Text style={styles.title}>{date}</Text>
     </View>
   );
 
@@ -123,10 +67,21 @@ function App(): JSX.Element {
           <Text style={styles.progressionTitle}>
             Acompanhe aqui sua progressão
           </Text>
+          <Text style={styles.progressionTitle}>
+            Objetivo: {dados.length}/200
+          </Text>
           <FlatList
             style={styles.flatList}
-            data={data}
-            renderItem={({item}) => <Item title={item.title} />}
+            data={dados}
+            renderItem={({item}) => (
+              <Item
+                date={item.date}
+                day={item.day}
+                training={item.training}
+                key={item.id}
+                id={item.id}
+              />
+            )}
             keyExtractor={item => item.id}
           />
           <TouchableOpacity
@@ -134,7 +89,11 @@ function App(): JSX.Element {
             onPress={() => setOpenModal(true)}>
             <Text style={styles.modalTitle}>REGISTRAR NOVO DIA</Text>
           </TouchableOpacity>
-          <AddTrainingModal openModal={openModal} setOpenModal={setOpenModal} />
+          <AddTrainingModal
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            treinos={dados}
+          />
         </View>
       </View>
     </>

@@ -7,20 +7,52 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
 import styles from './AddTraining.styles';
 
+import * as TrainingService from '../../service/training';
+import {Training} from '../../models/Training';
+
 type AddTrainingModalProps = {
   openModal: boolean;
   setOpenModal: Function;
+  treinos: Training[];
 };
 
-const AddTrainingModal = ({openModal, setOpenModal}: AddTrainingModalProps) => {
+const AddTrainingModal = ({
+  openModal,
+  setOpenModal,
+  treinos,
+}: AddTrainingModalProps) => {
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
+  const [training, setTraining] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+
+  const createTraining = async () => {
+    if (training === '') {
+      Alert.alert('Digite o que você treinou');
+
+      return;
+    }
+    setIsRegistering(true);
+    const key = await TrainingService.key();
+    const dados: Training = {
+      training,
+      date: date.toLocaleDateString('pt-BR'),
+      day: treinos.length + 1,
+      id: key ?? '',
+    };
+    if (key) {
+      TrainingService.createTraining(dados, key);
+    }
+    setIsRegistering(false);
+    setOpenModal(false);
+    Alert.alert('Dia registrado com sucesso!!');
+  };
 
   return (
     <View>
@@ -40,7 +72,10 @@ const AddTrainingModal = ({openModal, setOpenModal}: AddTrainingModalProps) => {
             </View>
             <Text style={styles.title}>Registrar novo dia</Text>
             <Text style={styles.subtitle}>O que você treinou</Text>
-            <TextInput style={styles.textInput} />
+            <TextInput
+              style={styles.textInput}
+              onChangeText={text => setTraining(text)}
+            />
             <Text style={styles.subtitle}>Dia do treino</Text>
             <TouchableOpacity
               style={styles.buttonDate}
@@ -69,9 +104,8 @@ const AddTrainingModal = ({openModal, setOpenModal}: AddTrainingModalProps) => {
             />
             <TouchableOpacity
               style={styles.button}
-              // disabled={!isRegistering}
-              onPress={() => setIsRegistering(!isRegistering)}>
-              {isRegistering ? (
+              onPress={() => createTraining()}>
+              {!isRegistering ? (
                 <Text style={styles.register}>REGISTRAR</Text>
               ) : (
                 <ActivityIndicator size="large" color="#FE5A27" />
