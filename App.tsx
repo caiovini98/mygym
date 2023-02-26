@@ -14,11 +14,14 @@ import firebase from './src/service/firebaseConnection';
 import styles from './App.styles';
 
 import AddTrainingModal from './src/components/AddTrainingModal/AddTrainingModal';
+import UpdateTrainingModal from './src/components/UpdateTrainingModal/UpdateTrainingModal';
 import {Training} from './src/models/Training';
 
 function App(): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const [dados, setDados] = useState<Training[]>([]);
+  const [treino, setTreino] = useState<Training>();
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     getTrainings();
@@ -44,12 +47,19 @@ function App(): JSX.Element {
       });
   };
 
-  const Item = ({training, day, date}: Training) => (
-    <View style={styles.item}>
+  const isEditMode = (id: Training) => {
+    setIsEdit(true);
+    setTreino(id);
+  };
+
+  const Item = ({training, day, date, id}: Training) => (
+    <TouchableOpacity
+      onPress={() => isEditMode({training, date, day, id})}
+      style={styles.item}>
       <Text style={styles.title}>Dia {day}</Text>
       <Text style={styles.title}>{training}</Text>
       <Text style={styles.title}>{date}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -93,6 +103,11 @@ function App(): JSX.Element {
             openModal={openModal}
             setOpenModal={setOpenModal}
             treinos={dados}
+          />
+          <UpdateTrainingModal
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
+            treino={treino}
           />
         </View>
       </View>
